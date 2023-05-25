@@ -31,6 +31,8 @@ A comprehensive command line with everything you need to have the ultimate CLI -
 `exit` - Exits the program
 
 
+Important Note - The program inital setup will create the files, `support_urled.json`, and `urled_support.txt`. If you delete these files, you will have to redo the setup process.
+
 
 
 Hand crafted by Codeiology on GitHub
