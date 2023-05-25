@@ -6,8 +6,11 @@ Kinda useless tool for enumerating links on a webpage, downloading from them, se
 For macOSX - Ventura. Make sure you have Homebrew (instructions at https://brew.sh) to get Python3 on your system.
 
 `brew install python3`
+
 `pip3 install -r requirements.txt`
+
 `python3 urled.py`
+
 
 # Features
 
