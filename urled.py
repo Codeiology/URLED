@@ -91,40 +91,83 @@ while True:
 		print(Fore.GREEN + "Done!" + Fore.RESET)
 	elif prompt == "enumerate":
 		print("")
-		url = input("Target URL: ")
-		loading_screen("Testing connection... ")
-		def is_connected():
-			try:
-				requests.get(url, timeout=3)
-				return True
-			except requests.ConnectionError:
-				return False
-		if is_connected():
-			loading_screen("Enumerating associated links... ")
+		linkorimg = input("Would you like to enumerate links, images, or filepaths? (link/img/path): ")
+		if linkorimg == "img":
+			imgurl = input("Target URL: ")
 			print("")
-			print("====================================================================")
+			loading_screen("Testing connection... ")
+			def is_connected():
+				try:
+					requests.get(imgurl, timeout=3)
+					return True
+				except requests.ConnectionError:
+					return False
+			if is_connected():
+				loading_screen("Enumerating images... ")
+				print("")
+				print("====================================================================")
+				print("")
+				imgresponse = requests.get(imgurl)
+				imgsoup = BeautifulSoup(imgresponse.text, 'html.parser')
+				img_tags = imgsoup.find_all('img')
+				if len(img_tags) == 0:
+					print(Fore.RED + "No images found." + Fore.RESET)
+				else:
+					for img_tag in img_tags:
+						src = img_tag.get('src')
+						if src:
+							imgabsolute_url = urljoin(imgurl, src)
+							type_text(imgabsolute_url)
+				print("")
+				print("====================================================================")
+				print("")
+		elif linkorimg == "path":
 			print("")
-			headers = {
-    			'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.1234.5678 Safari/537.36'
-			}
-			response = requests.get(url, headers=headers)
-			soup = BeautifulSoup(response.text, 'html.parser')
-			links = soup.find_all('a')
-			if len(links) == 0:
-				print(Fore.RED + "No links found." + Fore.RESET)
+			website_url = input("URL to enumerate: ")
+			loading_screen("Preparing... ")
+			print("")
+			print("======================================================================")
+			file_paths = enumerate_files(website_url)
+			for file_path in file_paths:
+				type_text(file_path)
+			print("")
+			print("======================================================================")
+			print("")
+		elif linkorimg == "link":
+			url = input("Target URL: ")
+			loading_screen("Testing connection... ")
+			def is_connected():
+				try:
+					requests.get(url, timeout=3)
+					return True
+				except requests.ConnectionError:
+					return False
+			if is_connected():
+				loading_screen("Enumerating links... ")
+				print("")
+				print("====================================================================")
+				print("")
+				headers = {
+					'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.1234.5678 Safari/537.36'
+				}
+				response = requests.get(url, headers=headers)
+				soup = BeautifulSoup(response.text, 'html.parser')
+				links = soup.find_all('a')
+				if len(links) == 0:
+					print(Fore.RED + "No links found." + Fore.RESET)
+				else:
+					for link in links:
+						href = link.get('href')
+						if href:
+							absolute_url = urljoin(url, href)
+							type_text(absolute_url)
+				print("")
+				print("====================================================================")
+				print("")
 			else:
-				for link in links:
-					href = link.get('href')
-					if href:
-						absolute_url = urljoin(url, href)
-						type_text(absolute_url)
-			print("")
-			print("====================================================================")
-			print("")
-		else:
-			print("")
-			type_text_slow(Fore.RED + "Computer or website is offline. Cannot continue. " + Fore.RESET)
-			print("")
+				print("")
+				type_text_slow(Fore.RED + "Computer or website is offline. Cannot continue. " + Fore.RESET)
+				print("")
 	elif prompt == "help":
 		instruct = f'''
 
