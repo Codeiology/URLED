@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from urllib.parse import quote
+import urllib.parse
 import time
 import signal
 import sys
