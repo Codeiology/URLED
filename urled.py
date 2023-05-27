@@ -180,6 +180,7 @@ exec <command> = execute command in regular terminal
 read <filename> = run a cat() command on a downloaded file
 dump <url> = dump website source code (server response)
 meta = start dumping wizard for web metadata
+dork = start google dorking wizard
 exit = exit
 
 '''
@@ -252,6 +253,85 @@ exit = exit
 			print("")
 			type_text_slow(Fore.RED + "Computer or website is offline. Cannot continue. " + Fore.RESET)
 			print("")
+	elif prompt == "dork":
+		print("")
+		dorkquery = input("Enter dork query: ")
+		encoded_text = urllib.parse.quote(dorkquery)
+		dorkurl = f"https://www.google.com/search?q={encoded_text}&client=safari"
+		print("")
+		type_text_slow(Fore.GREEN + "Ready." + Fore.RESET)
+		print("")
+		loading_screen("Testing connection... ")
+		def is_connected():
+			try:
+				requests.get(dorkurl, timeout=3)
+				return True
+			except requests.ConnectionError:
+				return False
+		if is_connected():
+			loading_screen("Searching results... ")
+			loading_screen("Enumerating results... ")
+			print("")
+			print("====================================================================")
+			print("")
+			headers = {
+    			'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.1234.5678 Safari/537.36'
+			}
+			response = requests.get(dorkurl, headers=headers)
+			soup = BeautifulSoup(response.text, 'html.parser')
+			links = soup.find_all('a')
+			if len(links) == 0:
+				print(Fore.RED + "No links found." + Fore.RESET)
+			else:
+				for link in links:
+					href = link.get('href')
+					if href:
+						absolute_url = urljoin(dorkurl, href)
+						type_text(absolute_url)
+			print("")
+			print("====================================================================")
+			print("")
+			while True:
+				nextpage = input("Would you like to view the next page? (y/n): ")
+				if nextpage == "y":
+					dorkurl = f"https://www.google.com/search?q={encoded_text}&client=safari"
+					print("")
+					type_text_slow(Fore.GREEN + "Ready." + Fore.RESET)
+					print("")
+					loading_screen("Testing connection... ")
+					def is_connected():
+						try:
+							requests.get(dorkurl, timeout=3)
+							return True
+						except requests.ConnectionError:
+							return False
+					if is_connected():
+						loading_screen("Searching results... ")
+						loading_screen("Enumerating results... ")
+						print("")
+						print("====================================================================")
+						print("")
+						headers = {
+							'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.1234.5678 Safari/537.36'
+						}
+						response = requests.get(dorkurl, headers=headers)
+						soup = BeautifulSoup(response.text, 'html.parser')
+						links = soup.find_all('a')
+						if len(links) == 0:
+							print(Fore.RED + "No links found." + Fore.RESET)
+						else:
+							for link in links:
+								href = link.get('href')
+								if href:
+									absolute_url = urljoin(dorkurl, href)
+									type_text(absolute_url)
+						print("")
+						print("====================================================================")
+						print("")
+					else:
+						print("")
+						type_text_slow(Fore.RED + "Computer or website is offline. Cannot continue. " + Fore.RESET)
+						print("")
 	else:
 		print("")
 		print(Fore.RED + "Invalid command. type, 'help' to see available commands" + Fore.RESET)
